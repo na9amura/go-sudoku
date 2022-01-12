@@ -1,9 +1,12 @@
 package main
 
 import (
+	"bufio"
 	"bytes"
+	"errors"
 	"fmt"
 	"strconv"
+	"strings"
 	// "time"
 )
 
@@ -88,7 +91,7 @@ func solved(b Board) bool {
 }
 
 func backtrack(b *Board, depth int) bool {
-	fmt.Printf("Depth: %v\n", depth)
+	// fmt.Printf("Depth: %v\n", depth)
 	if solved(*b) {
 		return true
 	}
@@ -113,6 +116,35 @@ func backtrack(b *Board, depth int) bool {
 		}
 	}
 	return false
+}
+
+func short(input string) (*Board, error) {
+	if len(input) != 81 {
+		return nil, errors.New("Input length must be 81")
+	}
+	sc := bufio.NewScanner(strings.NewReader(input))
+	sc.Split(bufio.ScanRunes)
+	var b Board
+
+	for i := 0; i < 9; i++ {
+		for j := 0; j < 9; j++ {
+			if !sc.Scan() {
+				break
+			}
+
+			t := sc.Text()
+			if t == "." {
+				b[i][j] = 0
+			} else {
+				n, err := strconv.Atoi(t)
+				if err != nil {
+					return nil, err
+				}
+				b[i][j] = n
+			}
+		}
+	}
+	return &b, nil
 }
 
 func main() {
